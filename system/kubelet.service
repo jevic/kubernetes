@@ -1,0 +1,22 @@
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/var/lib/kubelet
+ExecStart=/usr/local/bin/kubelet \
+  --hostname-override=k8s-m1 \
+  --pod-infra-container-image=reg.jevic.com/k8s/pause-amd64:3.1 \
+  --bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
+  --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
+  --config=/etc/kubernetes/kubelet.config.json \
+  --cert-dir=/etc/kubernetes/ssl \
+  --logtostderr=true \
+  --network-plugin=cni \
+  --v=2
+
+[Install]
+WantedBy=multi-user.target
+
