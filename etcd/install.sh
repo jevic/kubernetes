@@ -38,7 +38,6 @@ postinstall(){
     fi
 }
 
-#download
 preinstall
 install
 postinstall

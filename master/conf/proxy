@@ -5,7 +5,7 @@
 KUBE_PROXY_ARGS="   --bind-address=0.0.0.0 \
                     --cleanup-ipvs=true \
                     --cluster-cidr=10.254.0.0/16 \
-                    --hostname-override=k1 \
+                    --hostname-override=k2 \
                     --healthz-bind-address=0.0.0.0 \
                     --healthz-port=10256 \
                     --masquerade-all=true \

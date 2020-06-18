@@ -2,13 +2,13 @@
 # kubernetes kubelet (minion) config
 
 # The address for the info server to serve on (set to 0.0.0.0 or "" for all interfaces)
-KUBELET_ADDRESS="--node-ip=192.168.13.101"
+KUBELET_ADDRESS="--node-ip=IP"
 
 # The port for the info server to serve on
 # KUBELET_PORT="--port=10250"
 
 # You may leave this blank to use the actual hostname
-KUBELET_HOSTNAME="--hostname-override=k2"
+KUBELET_HOSTNAME="--hostname-override=NODE"
 
 # location of the api-server
 # KUBELET_API_SERVER=""
@@ -17,10 +17,10 @@ KUBELET_HOSTNAME="--hostname-override=k2"
 KUBELET_ARGS="  --address=0.0.0.0 \
                 --allow-privileged \
                 --anonymous-auth=false \
+		--authentication-token-webhook=true \
                 --authorization-mode=Webhook \
                 --bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
                 --client-ca-file=/etc/kubernetes/ssl/k8s-root-ca.pem \
-		--pod-infra-container-image=reg.yl.com/k8s/pause-amd64:3.1 \
                 --network-plugin=cni \
                 --cgroup-driver=cgroupfs \
                 --cert-dir=/etc/kubernetes/ssl \
@@ -34,15 +34,13 @@ KUBELET_ARGS="  --address=0.0.0.0 \
                 --image-gc-high-threshold=80 \
                 --image-gc-low-threshold=70 \
                 --image-pull-progress-deadline=30s \
-                --kube-reserved=cpu=500m,memory=512Mi,ephemeral-storage=1Gi \
                 --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
                 --minimum-image-ttl-duration=720h0m0s \
                 --node-labels=node.kubernetes.io/k8s-node=true \
+                --pod-infra-container-image=gcr.azk8s.cn/google_containers/pause-amd64:3.1 \
                 --port=10250 \
-                --read-only-port=0 \
                 --rotate-certificates \
                 --rotate-server-certificates \
                 --resolv-conf=/var/lib/resolve/resolv.conf \
-                --system-reserved=cpu=500m,memory=512Mi,ephemeral-storage=1Gi \
                 --fail-swap-on=false \
                 --v=2"

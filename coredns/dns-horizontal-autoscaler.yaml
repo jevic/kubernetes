@@ -29,11 +29,11 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["nodes"]
-    verbs: ["list", "watch"]
+    verbs: ["list"]
   - apiGroups: [""]
     resources: ["replicationcontrollers/scale"]
     verbs: ["get", "update"]
-  - apiGroups: ["apps"]
+  - apiGroups: ["extensions"]
     resources: ["deployments/scale", "replicasets/scale"]
     verbs: ["get", "update"]
 # Remove the configmaps rule once below issue is fixed:
@@ -76,17 +76,12 @@ spec:
       labels:
         k8s-app: kube-dns-autoscaler
       annotations:
-        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
+        scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       priorityClassName: system-cluster-critical
-      securityContext:
-        supplementalGroups: [ 65534 ]
-        fsGroup: 65534
-      nodeSelector:
-        kubernetes.io/os: linux
       containers:
       - name: autoscaler
-        image: k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.8.1
+        image: gcr.azk8s.cn/google_containers/cluster-proportional-autoscaler-amd64:1.1.2-r2
         resources:
             requests:
                 cpu: "20m"
@@ -96,15 +91,13 @@ spec:
           - --namespace=kube-system
           - --configmap=kube-dns-autoscaler
           # Should keep target in sync with cluster/addons/dns/kube-dns.yaml.base
-          - --target={{.Target}}
+          - --target=Deployment/coredns
           # When cluster is using large nodes(with more cores), "coresPerReplica" should dominate.
           # If using small nodes, "nodesPerReplica" should dominate.
-          - --default-params={"linear":{"coresPerReplica":256,"nodesPerReplica":16,"preventSinglePointFailure":true,"includeUnschedulableNodes":true}}
+          - --default-params={"linear":{"coresPerReplica":256,"nodesPerReplica":16,"preventSinglePointFailure":true}}
           - --logtostderr=true
           - --v=2
       tolerations:
       - key: "CriticalAddonsOnly"
         operator: "Exists"
-      nodeSelector:
-        kubernetes.io/os: linux
       serviceAccountName: kube-dns-autoscaler

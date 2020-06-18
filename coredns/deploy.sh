@@ -6,10 +6,10 @@ show_help () {
 cat << USAGE
 usage: $0 [ -r REVERSE-CIDR ] [ -i DNS-IP ] [ -d CLUSTER-DOMAIN ] [ -t YAML-TEMPLATE ]
 
-    -r : Define a reverse zone for the given CIDR. You may specify this option more
+    -r : Define a reverse zone for the given CIDR. You may specifcy this option more
          than once to add multiple reverse zones. If no reverse CIDRs are defined,
          then the default is to handle all reverse zones (i.e. in-addr.arpa and ip6.arpa)
-    -i : Specify the cluster DNS IP address. If not specified, the IP address of
+    -i : Specify the cluster DNS IP address. If not specificed, the IP address of
          the existing "kube-dns" service is used, if present.
     -s : Skips the translation of kube-dns configmap to the corresponding CoreDNS Corefile configuration.
 
@@ -23,11 +23,21 @@ CLUSTER_DOMAIN=cluster.local
 YAML_TEMPLATE="$DIR/coredns.yaml.sed"
 STUBDOMAINS=""
 UPSTREAM=\\/etc\\/resolv\.conf
+FEDERATIONS=""
+
 
 # Translates the kube-dns ConfigMap to equivalent CoreDNS Configuration.
 function translate-kube-dns-configmap {
+    kube-dns-federation-to-coredns
     kube-dns-upstreamnameserver-to-coredns
     kube-dns-stubdomains-to-coredns
+}
+
+function kube-dns-federation-to-coredns {
+  fed=$(kubectl -n kube-system get configmap kube-dns  -ojsonpath='{.data.federations}' 2> /dev/null | jq . | tr -d '":,')
+  if [[ ! -z ${fed} ]]; then
+  FEDERATIONS=$(sed -e '1s/^/federation /' -e 's/^/        /' -e '1i\\' <<< "${fed}") # add federation to the stanza
+  fi
 }
 
 function kube-dns-upstreamnameserver-to-coredns {
@@ -117,5 +127,6 @@ sed -e "s/CLUSTER_DNS_IP/$CLUSTER_DNS_IP/g" \
     -e "s/CLUSTER_DOMAIN/$CLUSTER_DOMAIN/g" \
     -e "s?REVERSE_CIDRS?$REVERSE_CIDRS?g" \
     -e "s@STUBDOMAINS@${STUBDOMAINS//$orig/$replace}@g" \
+    -e "s@FEDERATIONS@${FEDERATIONS//$orig/$replace}@g" \
     -e "s/UPSTREAMNAMESERVER/$UPSTREAM/g" \
     "${YAML_TEMPLATE}"
