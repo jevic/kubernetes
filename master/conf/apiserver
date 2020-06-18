@@ -5,7 +5,7 @@
 #
 
 # The address on the local server to listen to.
-KUBE_API_ADDRESS="--advertise-address=192.168.13.100 --bind-address=0.0.0.0"
+KUBE_API_ADDRESS="--advertise-address=192.168.1.230 --bind-address=0.0.0.0"
 
 # The port on the local server to listen on.
 KUBE_API_PORT="--secure-port=6443"
@@ -14,14 +14,13 @@ KUBE_API_PORT="--secure-port=6443"
 # KUBELET_PORT="--kubelet-port=10250"
 
 # Comma separated list of nodes in the etcd cluster
-KUBE_ETCD_SERVERS="--etcd-servers=https://192.168.13.100:2379,https://192.168.13.101:2379,https://192.168.13.102:2379"
+KUBE_ETCD_SERVERS="--etcd-servers=https://192.168.1.230:2379,https://192.168.1.231:2379,https://192.168.1.232:2379"
 
 # Address range to use for services
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=10.254.0.0/16"
 
 # default admission control policies
-#KUBE_ADMISSION_CONTROL="--enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,Priority,ResourceQuota"
-KUBE_ADMISSION_CONTROL="--enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,Priority,ResourceQuota,PodPreset,NodeRestriction"
+KUBE_ADMISSION_CONTROL="--enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,Priority,ResourceQuota"
 
 # Add your own!
 KUBE_API_ARGS=" --allow-privileged=true \
@@ -34,7 +33,6 @@ KUBE_API_ARGS=" --allow-privileged=true \
                 --audit-log-path=/var/log/kube-audit/audit.log \
                 --audit-policy-file=/etc/kubernetes/audit-policy.yaml \
                 --authorization-mode=Node,RBAC \
-		--basic-auth-file=/etc/kubernetes/basic-auth.csv \
                 --client-ca-file=/etc/kubernetes/ssl/k8s-root-ca.pem \
                 --enable-bootstrap-token-auth \
                 --enable-garbage-collector \
@@ -56,11 +54,11 @@ KUBE_API_ARGS=" --allow-privileged=true \
                 --tls-cert-file=/etc/kubernetes/ssl/kube-apiserver.pem \
                 --tls-private-key-file=/etc/kubernetes/ssl/kube-apiserver-key.pem \
 		--requestheader-client-ca-file=/etc/kubernetes/ssl/k8s-root-ca.pem \
-		--requestheader-allowed-names=aggregator,system:kube-proxy \
+		--requestheader-allowed-names=aggregator \
 		--enable-aggregator-routing=true \
 		--requestheader-group-headers=X-Remote-Group \
 		--requestheader-extra-headers-prefix=X-Remote-Extra- \
 		--requestheader-username-headers=X-Remote-User \
-		--proxy-client-cert-file=/etc/kubernetes/ssl/kube-proxy.pem \
-		--proxy-client-key-file=/etc/kubernetes/ssl/kube-proxy-key.pem \
+		--proxy-client-cert-file=/etc/kubernetes/ssl/metrics-server.pem \
+		--proxy-client-key-file=/etc/kubernetes/ssl/metrics-server-key.pem \
                 --v=2"

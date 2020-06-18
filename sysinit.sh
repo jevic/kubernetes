@@ -84,7 +84,7 @@ registry_init(){
 cat > /etc/docker/daemon.json <<EOF
 {
   "registry-mirrors": ["https://dlvqhrac.mirror.aliyuncs.com"],
-  "insecure-registries": ["reg.yl.com"]
+  "insecure-registries": ["registry-k8s.novalocal"]
 }
 EOF
 }
@@ -107,15 +107,15 @@ EOF
 source /etc/profile
 }
 
-### 初始化系统
-#init
-### 内核升级
-#kernel
-### ipvs 内核模块加载
+## 初始化系统
+init
+## 内核升级
+kernel
+## ipvs 内核模块加载
 ipvs
 ## 安装docker
-#docker
+docker
 ## 配置加速器和私有仓库
-#registry_init
+registry_init
 ## 配置历史命令记录
-#init_history
+init_history
