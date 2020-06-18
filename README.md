@@ -14,3 +14,4 @@
 9. ingress-nginx
 10. dashbaoard-v2.0 (建议先配置ingress-nginx)
 11. lxcfs
+12. lxcfs-admission-webhook
