@@ -15,3 +15,9 @@
 10. dashbaoard-v2.0 (建议先配置ingress-nginx)
 11. lxcfs
 12. lxcfs-admission-webhook
+
+## 分支信息:
+- v1.18.0 (master)
+- v1.13.8 
+- v1.14.0 (只包含启动配置文件)
+
